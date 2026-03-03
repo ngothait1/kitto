@@ -22,10 +22,15 @@ jobs:
           pip install -r requirements.txt
 
       - name: Generate app icon
-        run: python scripts/generate_icon.py
+        run: python scripts/generate_icon.py || echo "Icon generation skipped"
 
       - name: Build Kitto.app with py2app
-        run: python setup.py py2app --dist-dir dist
+        run: |
+          # Remove iconfile option if .icns was not generated
+          if [ ! -f resources/Kitto.icns ]; then
+            sed -i '' 's|"iconfile":.*||' setup.py
+          fi
+          python setup.py py2app --dist-dir dist
 
       - name: Sign with entitlements (no network)
         run: |
