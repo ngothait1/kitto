@@ -1,0 +1,49 @@
+name: Build & Release Kitto.dmg
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: macos-14          # Apple Silicon runner
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Generate app icon
+        run: python scripts/generate_icon.py
+
+      - name: Build Kitto.app with py2app
+        run: python setup.py py2app --dist-dir dist
+
+      - name: Sign with entitlements (no network)
+        run: |
+          codesign --force --deep --sign - \
+            --entitlements resources/Kitto.entitlements \
+            dist/Kitto.app
+
+      - name: Create DMG
+        run: |
+          hdiutil create \
+            -volname "Kitto" \
+            -srcfolder dist/Kitto.app \
+            -ov -format UDZO \
+            dist/Kitto.dmg
+
+      - name: Upload DMG to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/Kitto.dmg
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
