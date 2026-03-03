@@ -64,7 +64,7 @@ class Storage:
         """Return items newest-first as list of dicts (without heavy content blob)."""
         rows = self._conn.execute(
             "SELECT id, content_type, preview, byte_size, pinned, created_at "
-            "FROM items ORDER BY pinned DESC, created_at DESC LIMIT ? OFFSET ?",
+            "FROM items ORDER BY created_at DESC LIMIT ? OFFSET ?",
             (limit, offset),
         ).fetchall()
         return [
@@ -84,7 +84,7 @@ class Storage:
         rows = self._conn.execute(
             "SELECT id, content_type, preview, byte_size, pinned, created_at "
             "FROM items WHERE preview LIKE ? "
-            "ORDER BY pinned DESC, created_at DESC LIMIT ?",
+            "ORDER BY created_at DESC LIMIT ?",
             (f"%{query}%", limit),
         ).fetchall()
         return [
