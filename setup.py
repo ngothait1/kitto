@@ -36,13 +36,12 @@ OPTIONS = {
     "packages": [
         "kitto",
         "objc",
-        "AppKit",
-        "Foundation",
-        "Quartz",
-        "PyObjCTools",
     ],
     "includes": [
         "sqlite3",
+        "AppKit",
+        "Foundation",
+        "Quartz",
     ],
 }
 
