@@ -11,6 +11,7 @@ DATA_FILES = []
 
 OPTIONS = {
     "argv_emulation": False,
+    "use_faulthandler": True,
     "iconfile": "resources/Kitto.icns",
     "plist": {
         "CFBundleName": "Kitto",
@@ -26,17 +27,21 @@ OPTIONS = {
             "global hotkeys and simulate paste."
         ),
         # Explicitly deny all network access at the OS level.
-        # Even if a dependency tried to phone home, macOS will block it.
         "NSAppTransportSecurity": {
             "NSAllowsArbitraryLoads": False,
         },
     },
-    "packages": ["kitto"],
-    "includes": [
+    # PyObjC frameworks MUST be in packages (not includes) so py2app
+    # bundles their C extensions (_objc, _AppKit, etc.) correctly.
+    "packages": [
+        "kitto",
+        "objc",
         "AppKit",
         "Foundation",
         "Quartz",
-        "objc",
+        "PyObjCTools",
+    ],
+    "includes": [
         "sqlite3",
     ],
 }
