@@ -25,6 +25,11 @@ OPTIONS = {
             "Kitto needs Accessibility access to register "
             "global hotkeys and simulate paste."
         ),
+        # Explicitly deny all network access at the OS level.
+        # Even if a dependency tried to phone home, macOS will block it.
+        "NSAppTransportSecurity": {
+            "NSAllowsArbitraryLoads": False,
+        },
     },
     "packages": ["kitto"],
     "includes": [
